@@ -1,0 +1,68 @@
+[1mdiff --git a/app/controllers/tasks_controller.rb b/app/controllers/tasks_controller.rb[m
+[1mindex f902e83..fbbad8e 100644[m
+[1m--- a/app/controllers/tasks_controller.rb[m
+[1m+++ b/app/controllers/tasks_controller.rb[m
+[36m@@ -52,6 +52,6 @@[m [mclass TasksController < ApplicationController[m
+ [m
+   # Strong Parameter[m
+   def task_params[m
+[31m-    params.require(:task).permit(:content)[m
+[32m+[m[32m    params.require(:task).permit(:content,:status)[m
+   end [m
+ end[m
+[1mdiff --git a/app/models/task.rb b/app/models/task.rb[m
+[1mindex 3c23424..8479967 100644[m
+[1m--- a/app/models/task.rb[m
+[1m+++ b/app/models/task.rb[m
+[36m@@ -1,2 +1,3 @@[m
+ class Task < ApplicationRecord[m
+[32m+[m[32m    validates :status, presence: true, length: { maximum: 10 }[m
+ end[m
+[1mdiff --git a/app/views/tasks/_form._form.html.erb b/app/views/tasks/_form._form.html.erb[m
+[1mindex 46837c0..3f96989 100644[m
+[1m--- a/app/views/tasks/_form._form.html.erb[m
+[1m+++ b/app/views/tasks/_form._form.html.erb[m
+[36m@@ -9,10 +9,7 @@[m
+     </div>[m
+   <% end %>[m
+ [m
+[31m-  <%= f.label :status, 'ステータス' %>[m
+[31m-  <%= f.text_field :status %>[m
+[31m-[m
+[31m-  <%= f.label :content, 'タスク' %>[m
+[32m+[m[32m <%= f.label :content, 'タスク' %>[m
+   <%= f.text_field :content %>[m
+ [m
+   <%= f.submit '投稿' %>[m
+[1mdiff --git a/app/views/tasks/index.html.erb b/app/views/tasks/index.html.erb[m
+[1mindex dfa21f8..7df697e 100644[m
+[1m--- a/app/views/tasks/index.html.erb[m
+[1m+++ b/app/views/tasks/index.html.erb[m
+[36m@@ -2,7 +2,7 @@[m
+ [m
+ <ul>[m
+   <% @tasks.each do |task| %>[m
+[31m-    <li><%= link_to task.id, task %> :<%= task.content %></li>[m
+[32m+[m[32m    <li><%= link_to task.id, task %> :<%= task.content %>&gt; <%= task.content %></li>[m
+   <% end %>[m
+ </ul>[m
+ <%= link_to '作成ページ', new_task_path %>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/views/tasks/show.html.erb b/app/views/tasks/show.html.erb[m
+[1mindex a39e609..9f6879b 100644[m
+[1m--- a/app/views/tasks/show.html.erb[m
+[1m+++ b/app/views/tasks/show.html.erb[m
+[36m@@ -1,7 +1,7 @@[m
+ <h1>id: <%= @task.id %> 詳細ページ</h1>[m
+[31m-[m
+[31m-<p><%= @task.content %></p>[m
+[32m+[m[32m<p>ステータス: <%= @message.status%></p>[m
+[32m+[m[32m<p>タスク<%= @task.content %></p>[m
+ [m
+ <%= link_to '一覧に戻る', tasks_path %>[m
+[31m-<%= link_to 'このメッセージを編集する', edit_task_path(@task) %>[m
+[31m-<%= link_to 'このメッセージを削除する', @task, method: :delete, data: { confirm: '本当に削除してよろしいですか？' } %>[m
+\ No newline at end of file[m
+[32m+[m[32m<%= link_to 'このタスクを編集する', edit_task_path(@task) %>[m
+[32m+[m[32m<%= link_to 'このタスクを削除する', @task, method: :delete, data: { confirm: '本当に削除してよろしいですか？' } %>[m
+\ No newline at end of file[m
