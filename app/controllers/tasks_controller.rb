@@ -56,8 +56,58 @@ class TasksController < ApplicationController
 
   private
 
+
+  before_action :require_user_logged_in
+  before_action :correct_user, only: [:destroy]
+
+  def create
+    @Task = current_user.tasks.build(micropost_params)
+    if @Task.save
+      flash[:success] = 'メッセージを投稿しました。'
+      redirect_to root_url
+    else
+      @Task = current_user.microposts.order('created_at DESC').page(params[:page])
+      flash.now[:danger] = 'メッセージの投稿に失敗しました。'
+      render 'toppages/index'
+    end
+  end
+
+  def destroy
+    @Task.destroy.show.edit.update
+    flash[:success] = 'メッセージを削除しました。'
+    redirect_back(fallback_location: root_path)
+  end
+
+  private
+
+  def tasks_params
+    params.require(:tasks).permit(:content)
+  end
+
+  def correct_user
+    @Task = current_user.tasks.find_by(id: params[:id])
+    unless @micropost
+      redirect_to root_url
+    end
+  def show
+    @Task = tasks
+  end
+   
+   def edit
+    @Task = tasks
+   end
+  
+  def updaet 
+    @Task = tasks
+  end
+
+ 
+ 
+  
   # Strong Parameter
   def task_params
     params.require(:task).permit(:content,:status)
   end 
-end
+  end
+
+
